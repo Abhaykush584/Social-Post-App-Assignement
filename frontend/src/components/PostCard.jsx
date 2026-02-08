@@ -12,7 +12,8 @@ const PostCard = ({ post, refresh }) => {
   return (
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
-        <h4>{post.user.username}</h4>
+        <h4>{post.username}</h4>
+
         <p>{post.text}</p>
 
         <Button onClick={likePost}>

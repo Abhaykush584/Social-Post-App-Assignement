@@ -2,10 +2,11 @@ import React from "react";
 import { AppBar, Toolbar, Button } from "@mui/material";
 
 const Navbar = () => {
-  const logout = () => {
-    localStorage.clear();
-    window.location.href = "/auth";
-  };
+ const logout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/auth";
+};
+
 
   return (
     <AppBar position="static">

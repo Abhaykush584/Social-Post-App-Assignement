@@ -1,74 +1,75 @@
-import React from "react";
+import * as React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../services/api";
 
 const Auth = () => {
-  const [isSignup, setIsSignup] = useState(false);
+  const navigate = useNavigate();
+  const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: ""
   });
-  const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
+  const submit = async () => {
     try {
-      setError("");
-
-      if (isSignup) {
-        await API.post("/auth/signup", form);
-        setIsSignup(false);
-      } else {
-        const res = await API.post("/auth/login", {
-          email: form.email,
-          password: form.password
-        });
+      if (isLogin) {
+        const res = await API.post("/auth/login", form);
         localStorage.setItem("token", res.data.token);
-        window.location.href = "/";
+        navigate("/");
+      } else {
+        await API.post("/auth/signup", form);
+        setIsLogin(true);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      alert("Auth failed");
     }
   };
 
   return (
-    <div style={{ width: "300px", margin: "100px auto" }}>
-      <h2>{isSignup ? "Signup" : "Login"}</h2>
+    <div style={{ maxWidth: "400px", margin: "100px auto" }}>
+      <h2>{isLogin ? "Login" : "Signup"}</h2>
 
-      {isSignup && (
+      {!isLogin && (
         <input
           placeholder="Username"
-          onChange={e => setForm({ ...form, username: e.target.value })}
+          onChange={e =>
+            setForm({ ...form, username: e.target.value })
+          }
         />
       )}
 
       <input
         placeholder="Email"
-        onChange={e => setForm({ ...form, email: e.target.value })}
+        onChange={e =>
+          setForm({ ...form, email: e.target.value })
+        }
       />
 
       <input
         type="password"
         placeholder="Password"
-        onChange={e => setForm({ ...form, password: e.target.value })}
+        onChange={e =>
+          setForm({ ...form, password: e.target.value })
+        }
       />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      <button onClick={handleSubmit}>
-        {isSignup ? "Create Account" : "Login"}
+      <button onClick={submit}>
+        {isLogin ? "Login" : "Signup"}
       </button>
 
       <p
         style={{ cursor: "pointer", color: "blue" }}
-        onClick={() => setIsSignup(!isSignup)}
+        onClick={() => setIsLogin(!isLogin)}
       >
-        {isSignup
-          ? "Already have an account? Login"
-          : "Don't have an account? Signup"}
+        Switch to {isLogin ? "Signup" : "Login"}
       </p>
     </div>
   );
 };
 
 export default Auth;
+
+
+
